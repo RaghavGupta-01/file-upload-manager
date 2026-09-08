@@ -14,6 +14,10 @@ export function createFileItem(file: File): FileItem {
     name: file.name,
     size: file.size,
     type: file.type || 'application/octet-stream',
+    status: 'pending',
+    progress: 0,
+    uploadedBytes: 0,
+    rawFile: file,
   }
 }
 
