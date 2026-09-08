@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import type { ChangeEvent } from 'react'
+import toast from 'react-hot-toast'
 import type { FileItem } from '../types/file'
 import { createFileItem } from '../utils/fileUtils'
 import { validateFiles } from '../utils/fileValidation'
@@ -23,6 +24,20 @@ export function useFileUpload(options?: ValidationOptions) {
 
     if (newRejected.length > 0) {
       setRejectedFiles((prev) => [...newRejected, ...prev])
+      newRejected.forEach((item) => {
+        const isDuplicate = item.reason.toLowerCase().includes('duplicate')
+
+        if (isDuplicate) {
+          toast(`${item.file.name}: ${item.reason}`, {
+            icon: '⚠️',
+            id: `duplicate-${item.file.name}-${item.file.size}`,
+          })
+        } else {
+          toast.error(`${item.file.name}: ${item.reason}`, {
+            id: `rejected-${item.file.name}-${item.file.size}`,
+          })
+        }
+      })
     }
 
     if (validFiles.length > 0) {

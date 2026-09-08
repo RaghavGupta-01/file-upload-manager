@@ -1,3 +1,4 @@
+import { AppToaster } from './components/AppToaster'
 import { useFileUpload } from './hooks/useFileUpload'
 import { useDragAndDrop } from './hooks/useDragAndDrop'
 import { Header } from './components/Header'
@@ -31,6 +32,9 @@ function App() {
 
       {/* Top Header */}
       <Header onUploadClick={triggerFileInput} />
+
+      {/* Toast Notifications */}
+      <AppToaster />
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col justify-start relative">
