@@ -11,13 +11,16 @@ export function useFileUpload() {
     fileInputRef.current?.click()
   }
 
+  const addFiles = (incomingFiles: File[]) => {
+    const newItems = incomingFiles.map(createFileItem)
+    setFiles((prev) => [...newItems, ...prev])
+  }
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return
 
     const selectedFiles = Array.from(e.target.files)
-    const newItems = selectedFiles.map(createFileItem)
-
-    setFiles((prev) => [...newItems, ...prev])
+    addFiles(selectedFiles)
     e.target.value = ''
   }
 
@@ -33,6 +36,7 @@ export function useFileUpload() {
     files,
     fileInputRef,
     triggerFileInput,
+    addFiles,
     handleFileChange,
     removeFile,
     clearFiles,

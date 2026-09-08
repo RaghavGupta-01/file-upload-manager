@@ -1,14 +1,25 @@
 import { useFileUpload } from './hooks/useFileUpload'
+import { useDragAndDrop } from './hooks/useDragAndDrop'
 import { Header } from './components/Header'
 import { FileList } from './components/FileList'
 import { EmptyState } from './components/EmptyState'
+import { DropZone } from './components/DropZone'
 import './App.css'
 
 function App() {
-  const { files, fileInputRef, triggerFileInput, handleFileChange } = useFileUpload()
+  const { files, fileInputRef, triggerFileInput, addFiles, handleFileChange } = useFileUpload()
+  const { isDragging, handleDragEnter, handleDragOver, handleDragLeave, handleDrop } = useDragAndDrop({
+    onDropFiles: addFiles,
+  })
 
   return (
-    <div className="w-full min-h-screen bg-slate-50 flex flex-col">
+    <div
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className="w-full min-h-screen bg-slate-50 flex flex-col relative"
+    >
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
@@ -22,12 +33,15 @@ function App() {
       <Header onUploadClick={triggerFileInput} />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col justify-start">
+      <main className="flex-1 flex flex-col justify-start relative">
         {files.length > 0 ? (
           <FileList files={files} />
         ) : (
           <EmptyState />
         )}
+
+        {/* DropZone Overlay */}
+        <DropZone isDragging={isDragging} />
       </main>
     </div>
   )
