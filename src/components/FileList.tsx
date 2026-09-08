@@ -1,5 +1,6 @@
 import React from 'react'
 import type { FileItem } from '../types/file'
+import { formatFileSize } from '../utils/fileUtils'
 import { File, FileText, Image, MoreVertical } from 'lucide-react'
 
 interface FileListProps {
@@ -32,7 +33,7 @@ export const FileList: React.FC<FileListProps> = ({ files }) => {
                 {file.name}
               </span>
               <span className="text-xs text-slate-400 shrink-0">
-                {(file.size / 1024).toFixed(1)} KB
+                {formatFileSize(file.size)}
               </span>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { UploadCloud } from 'lucide-react'
 import type { FileItem } from './types/file'
+import { createFileItem } from './utils/fileUtils'
 import { FileList } from './components/FileList'
 import './App.css'
 
@@ -12,12 +13,7 @@ function App() {
     if (!e.target.files || e.target.files.length === 0) return
 
     const selectedFiles = Array.from(e.target.files)
-    const newItems: FileItem[] = selectedFiles.map((file) => ({
-      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    }))
+    const newItems = selectedFiles.map(createFileItem)
 
     setFiles((prev) => [...newItems, ...prev])
     e.target.value = ''
