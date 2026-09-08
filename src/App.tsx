@@ -1,23 +1,10 @@
-import { useState, useRef } from 'react'
 import { UploadCloud } from 'lucide-react'
-import type { FileItem } from './types/file'
-import { createFileItem } from './utils/fileUtils'
+import { useFileUpload } from './hooks/useFileUpload'
 import { FileList } from './components/FileList'
 import './App.css'
 
 function App() {
-  const [files, setFiles] = useState<FileItem[]>([])
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return
-
-    const selectedFiles = Array.from(e.target.files)
-    const newItems = selectedFiles.map(createFileItem)
-
-    setFiles((prev) => [...newItems, ...prev])
-    e.target.value = ''
-  }
+  const { files, fileInputRef, triggerFileInput, handleFileChange } = useFileUpload()
 
   return (
     <div className="w-full min-h-screen bg-slate-50 flex flex-col">
@@ -34,7 +21,7 @@ function App() {
       <header className="flex items-center justify-between px-8 py-5 border-b border-slate-200 bg-white shadow-xs sticky top-0 z-10">
         <h1 className="text-xl font-semibold text-slate-900">File Upload Manager</h1>
         <button
-          onClick={() => fileInputRef.current?.click()}
+          onClick={triggerFileInput}
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:scale-95 transition-all shadow-xs cursor-pointer"
         >
           <UploadCloud className="w-4 h-4" />
@@ -48,9 +35,7 @@ function App() {
           <FileList files={files} />
         ) : (
           <div className="flex-1 flex items-center justify-center p-8">
-            <div
-              className="flex flex-col items-center justify-center text-center max-w-md p-8"
-            >
+            <div className="flex flex-col items-center justify-center text-center max-w-md p-8">
               <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600 group-hover:scale-110 transition-transform">
                 <UploadCloud className="w-8 h-8" />
               </div>
