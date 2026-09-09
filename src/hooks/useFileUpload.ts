@@ -1,10 +1,11 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import type { ChangeEvent } from 'react'
 import toast from 'react-hot-toast'
 import type { FileItem } from '../types/file'
 import { createFileItem } from '../utils/fileUtils'
 import { validateFiles } from '../utils/fileValidation'
 import type { ValidationOptions, RejectedFile } from '../utils/fileValidation'
+import { uploadService } from '../services/uploadService'
 
 export function useFileUpload(options?: ValidationOptions) {
   const [files, setFiles] = useState<FileItem[]>([])
@@ -14,6 +15,49 @@ export function useFileUpload(options?: ValidationOptions) {
   const triggerFileInput = () => {
     fileInputRef.current?.click()
   }
+
+  const startUpload = useCallback((item: FileItem) => {
+    setFiles((prev) =>
+      prev.map((f) => (f.id === item.id ? { ...f, status: 'uploading', progress: 0 } : f))
+    )
+
+    uploadService
+      .upload(item, {
+        onProgress: (progress, uploadedBytes) => {
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === item.id
+                ? { ...f, status: 'uploading', progress, uploadedBytes }
+                : f
+            )
+          )
+        },
+        onSuccess: () => {
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === item.id
+                ? { ...f, status: 'completed', progress: 100 }
+                : f
+            )
+          )
+        },
+        onError: (error) => {
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === item.id
+                ? {
+                    ...f,
+                    status: 'failed',
+                    errorMessage: error.message,
+                  }
+                : f
+            )
+          )
+        },
+      })
+      .catch(() => {
+      })
+  }, [])
 
   const addFiles = (incomingFiles: File[]) => {
     const { validFiles, rejectedFiles: newRejected } = validateFiles(
@@ -41,8 +85,16 @@ export function useFileUpload(options?: ValidationOptions) {
     }
 
     if (validFiles.length > 0) {
-      const newItems = validFiles.map(createFileItem)
+      const newItems: FileItem[] = validFiles.map((file) => ({
+        ...createFileItem(file),
+        status: 'uploading',
+      }))
+
       setFiles((prev) => [...newItems, ...prev])
+
+      newItems.forEach((item) => {
+        startUpload(item)
+      })
     }
 
     return { validFiles, rejectedFiles: newRejected }
