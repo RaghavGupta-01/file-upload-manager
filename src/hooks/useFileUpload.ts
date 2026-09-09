@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import type { ChangeEvent } from 'react'
 import toast from 'react-hot-toast'
 import type { FileItem } from '../types/file'
@@ -6,11 +6,36 @@ import { createFileItem } from '../utils/fileUtils'
 import { validateFiles } from '../utils/fileValidation'
 import type { ValidationOptions, RejectedFile } from '../utils/fileValidation'
 import { uploadService } from '../services/uploadService'
+import { storageService } from '../services/storageService'
 
 export function useFileUpload(options?: ValidationOptions) {
   const [files, setFiles] = useState<FileItem[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
+  const [isHydrated, setIsHydrated] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    let isMounted = true
+
+    storageService.getAllFiles().then((storedFiles) => {
+      if (isMounted) {
+        if (storedFiles.length > 0) {
+          setFiles(storedFiles)
+        }
+        setIsHydrated(true)
+      }
+    })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isHydrated) {
+      storageService.saveFiles(files)
+    }
+  }, [files, isHydrated])
 
   const triggerFileInput = () => {
     fileInputRef.current?.click()
@@ -123,11 +148,13 @@ export function useFileUpload(options?: ValidationOptions) {
   const removeFile = (id: string) => {
     uploadService.cancel(id)
     setFiles((prev) => prev.filter((file) => file.id !== id))
+    storageService.deleteFile(id)
   }
 
   const clearFiles = () => {
     files.forEach((file) => uploadService.cancel(file.id))
     setFiles([])
+    storageService.clearAll()
   }
 
   const clearRejectedFiles = () => {
@@ -137,6 +164,7 @@ export function useFileUpload(options?: ValidationOptions) {
   return {
     files,
     rejectedFiles,
+    isHydrated,
     fileInputRef,
     triggerFileInput,
     addFiles,
