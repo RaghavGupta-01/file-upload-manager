@@ -47,7 +47,7 @@ class StorageService {
         request.onsuccess = () => {
           const rawItems = request.result as FileItem[]
 
-          const hydratedItems: FileItem[] = rawItems.map((item) => {
+          const restoredItems: FileItem[] = rawItems.map((item) => {
             if (item.status === 'uploading' || item.status === 'pending') {
               return {
                 ...item,
@@ -57,7 +57,7 @@ class StorageService {
             }
             return item
           })
-          resolve(hydratedItems)
+          resolve(restoredItems)
         }
 
         request.onerror = () => {
@@ -79,7 +79,7 @@ class StorageService {
 
         store.clear()
         for (const file of files) {
-          const { rawFile, ...persistableFile } = file
+          const { rawFile: _rawFile, ...persistableFile } = file
           store.put(persistableFile)
         }
 

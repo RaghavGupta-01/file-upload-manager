@@ -11,7 +11,7 @@ import { storageService } from '../services/storageService'
 export function useFileUpload(options?: ValidationOptions) {
   const [files, setFiles] = useState<FileItem[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
-  const [isHydrated, setIsHydrated] = useState(false)
+  const [isRestored, setIsRestored] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export function useFileUpload(options?: ValidationOptions) {
         if (storedFiles.length > 0) {
           setFiles(storedFiles)
         }
-        setIsHydrated(true)
+        setIsRestored(true)
       }
     })
 
@@ -32,10 +32,10 @@ export function useFileUpload(options?: ValidationOptions) {
   }, [])
 
   useEffect(() => {
-    if (isHydrated) {
+    if (isRestored) {
       storageService.saveFiles(files)
     }
-  }, [files, isHydrated])
+  }, [files, isRestored])
 
   const triggerFileInput = () => {
     fileInputRef.current?.click()
@@ -164,7 +164,7 @@ export function useFileUpload(options?: ValidationOptions) {
   return {
     files,
     rejectedFiles,
-    isHydrated,
+    isRestored,
     fileInputRef,
     triggerFileInput,
     addFiles,
