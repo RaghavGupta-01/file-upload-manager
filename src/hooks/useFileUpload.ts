@@ -42,12 +42,13 @@ export function useFileUpload(options?: ValidationOptions) {
           )
         },
         onError: (error) => {
+          const isAborted = error.message.includes('canceled')
           setFiles((prev) =>
             prev.map((f) =>
               f.id === item.id
                 ? {
                     ...f,
-                    status: 'failed',
+                    status: isAborted ? 'canceled' : 'failed',
                     errorMessage: error.message,
                   }
                 : f
@@ -100,6 +101,17 @@ export function useFileUpload(options?: ValidationOptions) {
     return { validFiles, rejectedFiles: newRejected }
   }
 
+  const cancelUpload = (id: string) => {
+    uploadService.cancel(id)
+  }
+
+  const retryUpload = (id: string) => {
+    const targetFile = files.find((f) => f.id === id)
+    if (targetFile) {
+      startUpload(targetFile)
+    }
+  }
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return
 
@@ -109,10 +121,12 @@ export function useFileUpload(options?: ValidationOptions) {
   }
 
   const removeFile = (id: string) => {
+    uploadService.cancel(id)
     setFiles((prev) => prev.filter((file) => file.id !== id))
   }
 
   const clearFiles = () => {
+    files.forEach((file) => uploadService.cancel(file.id))
     setFiles([])
   }
 
@@ -130,5 +144,7 @@ export function useFileUpload(options?: ValidationOptions) {
     removeFile,
     clearFiles,
     clearRejectedFiles,
+    cancelUpload,
+    retryUpload,
   }
 }

@@ -4,15 +4,24 @@ import { formatFileSize } from '../utils/fileUtils'
 import { FileIcon } from './FileIcon'
 import { FileStatusBadge } from './FileStatusBadge'
 import { ProgressBar } from './ProgressBar'
-import { MoreVertical } from 'lucide-react'
+import { MoreVertical, X, RotateCcw } from 'lucide-react'
 
 interface FileItemProps {
   file: FileItemType
   onActionClick?: (file: FileItemType) => void
+  onCancel?: (id: string) => void
+  onRetry?: (id: string) => void
 }
 
-export const FileItem: React.FC<FileItemProps> = ({ file, onActionClick }) => {
+export const FileItem: React.FC<FileItemProps> = ({
+  file,
+  onActionClick,
+  onCancel,
+  onRetry,
+}) => {
   const isProgressVisible = file.status === 'uploading' || file.status === 'pending'
+  const isUploading = file.status === 'uploading'
+  const canRetry = file.status === 'failed' || file.status === 'canceled'
 
   return (
     <div className="w-full bg-white px-4 py-3 rounded-lg border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col gap-2">
@@ -33,12 +42,34 @@ export const FileItem: React.FC<FileItemProps> = ({ file, onActionClick }) => {
         </div>
 
         {/* Right: Status Badge & Action Menu */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <FileStatusBadge
             status={file.status}
             progress={file.progress}
             errorMessage={file.errorMessage}
           />
+
+          {isUploading && onCancel && (
+            <button
+              type="button"
+              onClick={() => onCancel(file.id)}
+              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
+              title="Cancel upload"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+
+          {canRetry && onRetry && (
+            <button
+              type="button"
+              onClick={() => onRetry(file.id)}
+              className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer shrink-0"
+              title="Retry upload"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          )}
 
           <button
             type="button"

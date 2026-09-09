@@ -8,7 +8,15 @@ import { DropZone } from './components/DropZone'
 import './App.css'
 
 function App() {
-  const { files, fileInputRef, triggerFileInput, addFiles, handleFileChange } = useFileUpload()
+  const {
+    files,
+    fileInputRef,
+    triggerFileInput,
+    addFiles,
+    handleFileChange,
+    cancelUpload,
+    retryUpload,
+  } = useFileUpload()
   const { isDragging, handleDragEnter, handleDragOver, handleDragLeave, handleDrop } = useDragAndDrop({
     onDropFiles: addFiles,
   })
@@ -39,7 +47,11 @@ function App() {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col justify-start relative">
         {files.length > 0 ? (
-          <FileList files={files} />
+          <FileList
+            files={files}
+            onCancel={cancelUpload}
+            onRetry={retryUpload}
+          />
         ) : (
           <EmptyState />
         )}
