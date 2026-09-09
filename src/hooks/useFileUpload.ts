@@ -8,6 +8,8 @@ import type { ValidationOptions, RejectedFile } from '../utils/fileValidation'
 import { uploadService } from '../services/uploadService'
 import { storageService } from '../services/storageService'
 
+const MAX_CONCURRENT_UPLOADS = 3
+
 export function useFileUpload(options?: ValidationOptions) {
   const [files, setFiles] = useState<FileItem[]>([])
   const [rejectedFiles, setRejectedFiles] = useState<RejectedFile[]>([])
@@ -85,6 +87,23 @@ export function useFileUpload(options?: ValidationOptions) {
       })
   }, [])
 
+  // Process concurrent upload queue
+  useEffect(() => {
+    if (!isRestored) return
+
+    const activeUploads = files.filter((f) => f.status === 'uploading').length
+    const availableSlots = MAX_CONCURRENT_UPLOADS - activeUploads
+
+    if (availableSlots > 0) {
+      const pendingFiles = files.filter((f) => f.status === 'pending')
+      const filesToStart = pendingFiles.slice(0, availableSlots)
+
+      filesToStart.forEach((file) => {
+        startUpload(file)
+      })
+    }
+  }, [files, isRestored, startUpload])
+
   const addFiles = (incomingFiles: File[]) => {
     const { validFiles, rejectedFiles: newRejected } = validateFiles(
       incomingFiles,
@@ -113,14 +132,10 @@ export function useFileUpload(options?: ValidationOptions) {
     if (validFiles.length > 0) {
       const newItems: FileItem[] = validFiles.map((file) => ({
         ...createFileItem(file),
-        status: 'uploading',
+        status: 'pending',
       }))
 
       setFiles((prev) => [...newItems, ...prev])
-
-      newItems.forEach((item) => {
-        startUpload(item)
-      })
     }
 
     return { validFiles, rejectedFiles: newRejected }
@@ -131,10 +146,13 @@ export function useFileUpload(options?: ValidationOptions) {
   }
 
   const retryUpload = (id: string) => {
-    const targetFile = files.find((f) => f.id === id)
-    if (targetFile) {
-      startUpload(targetFile)
-    }
+    setFiles((prev) =>
+      prev.map((f) =>
+        f.id === id
+          ? { ...f, status: 'pending', progress: 0, errorMessage: undefined }
+          : f
+      )
+    )
   }
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
