@@ -55,24 +55,26 @@ export const FileItem: React.FC<FileItemProps> = ({
 
   return (
     <div className="w-full bg-white px-4 py-3 rounded-lg border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col gap-2 relative">
-      <div className="flex items-center justify-between gap-4">
-        {/* Left: Icon & File Info */}
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="p-2 bg-slate-50 rounded-md border border-slate-100 shrink-0">
-            <FileIcon type={file.type} />
-          </div>
-          <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-center sm:gap-3">
-            <span className="text-sm font-medium text-slate-800 truncate" title={file.name}>
-              {file.name}
-            </span>
-            <span className="text-xs text-slate-400 shrink-0">
-              {formatFileSize(file.size)}
-            </span>
-          </div>
+      <div className="flex items-center gap-4">
+        {/*File Icon */}
+        <div className="w-9 h-9 flex items-center justify-center bg-slate-50 rounded-md border border-slate-100 shrink-0">
+          <FileIcon type={file.type} />
         </div>
 
-        {/* Right: Status Badge & Action Menu */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* File Name */}
+        <div className="flex-1 min-w-0">
+          <span className="text-sm font-medium text-slate-800 truncate block" title={file.name}>
+            {file.name}
+          </span>
+        </div>
+
+        {/* File Size */}
+        <div className="w-28 shrink-0 text-xs text-slate-500 font-mono">
+          {formatFileSize(file.size)}
+        </div>
+
+        {/* Status Badge & Actions */}
+        <div className="w-44 shrink-0 flex items-center justify-end gap-2">
           <FileStatusBadge
             status={file.status}
             progress={file.progress}
