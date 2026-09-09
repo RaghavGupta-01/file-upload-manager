@@ -147,8 +147,12 @@ export function useFileUpload(options?: ValidationOptions) {
 
   const removeFile = (id: string) => {
     uploadService.cancel(id)
+    const target = files.find((f) => f.id === id)
     setFiles((prev) => prev.filter((file) => file.id !== id))
     storageService.deleteFile(id)
+    if (target) {
+      toast.success(`${target.name} deleted`, { id: `delete-${id}` })
+    }
   }
 
   const clearFiles = () => {

@@ -16,6 +16,7 @@ function App() {
     handleFileChange,
     cancelUpload,
     retryUpload,
+    removeFile,
   } = useFileUpload()
   const { isDragging, handleDragEnter, handleDragOver, handleDragLeave, handleDrop } = useDragAndDrop({
     onDropFiles: addFiles,
@@ -51,6 +52,7 @@ function App() {
             files={files}
             onCancel={cancelUpload}
             onRetry={retryUpload}
+            onDelete={removeFile}
           />
         ) : (
           <EmptyState />

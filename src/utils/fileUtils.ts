@@ -25,3 +25,30 @@ export function getFileExtension(fileName: string): string {
   const parts = fileName.split('.')
   return parts.length > 1 ? parts.pop()?.toLowerCase() || '' : ''
 }
+
+export function downloadFile(file: FileItem): void {
+  let url: string
+  let shouldRevoke = false
+
+  if (file.rawFile) {
+    url = URL.createObjectURL(file.rawFile)
+    shouldRevoke = true
+  } else {
+    const fallbackBlob = new Blob([`Simulated content for ${file.name}`], {
+      type: file.type || 'text/plain',
+    })
+    url = URL.createObjectURL(fallbackBlob)
+    shouldRevoke = true
+  }
+
+  const a = document.createElement('a')
+  a.href = url
+  a.download = file.name
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+
+  if (shouldRevoke) {
+    URL.revokeObjectURL(url)
+  }
+}

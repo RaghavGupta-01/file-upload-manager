@@ -4,16 +4,16 @@ import { FileItem } from './FileItem'
 
 interface FileListProps {
   files: FileItemType[]
-  onActionClick?: (file: FileItemType) => void
   onCancel?: (id: string) => void
   onRetry?: (id: string) => void
+  onDelete?: (id: string) => void
 }
 
 export const FileList: React.FC<FileListProps> = ({
   files,
-  onActionClick,
   onCancel,
   onRetry,
+  onDelete,
 }) => {
   return (
     <div className="w-full max-w-5xl mx-auto p-8 space-y-2.5">
@@ -21,9 +21,9 @@ export const FileList: React.FC<FileListProps> = ({
         <FileItem
           key={file.id}
           file={file}
-          onActionClick={onActionClick}
           onCancel={onCancel}
           onRetry={onRetry}
+          onDelete={onDelete}
         />
       ))}
     </div>
