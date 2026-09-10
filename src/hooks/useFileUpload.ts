@@ -45,7 +45,7 @@ export function useFileUpload(options?: ValidationOptions) {
 
   const startUpload = useCallback((item: FileItem) => {
     setFiles((prev) =>
-      prev.map((f) => (f.id === item.id ? { ...f, status: 'uploading', progress: 0 } : f))
+      prev.map((f) => (f.id === item.id ? { ...f, status: 'uploading', progress: f.progress ?? 0 } : f))
     )
 
     uploadService
@@ -149,7 +149,7 @@ export function useFileUpload(options?: ValidationOptions) {
     setFiles((prev) =>
       prev.map((f) =>
         f.id === id
-          ? { ...f, status: 'pending', progress: 0, errorMessage: undefined }
+          ? { ...f, status: 'pending', errorMessage: undefined }
           : f
       )
     )
