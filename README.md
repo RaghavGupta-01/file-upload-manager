@@ -170,6 +170,8 @@ file-upload-manager/
 │   ├── utils/
 │   │   └── fileValidation.test.ts  # File size, format, and duplicate validation tests
 │   └── setup.ts                    # Vitest and React Testing Library setup
+├── ASSUMPTIONS.md
+├── TECHNICAL_DECISIONS.md
 ├── README.md
 ├── package.json
 └── vite.config.ts
