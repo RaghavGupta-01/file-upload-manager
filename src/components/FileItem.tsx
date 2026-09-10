@@ -54,27 +54,27 @@ export const FileItem: React.FC<FileItemProps> = ({
   }
 
   return (
-    <div className="w-full bg-white px-4 py-3 rounded-lg border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col gap-2 relative">
-      <div className="flex items-center gap-4">
-        {/*File Icon */}
-        <div className="w-9 h-9 flex items-center justify-center bg-slate-50 rounded-md border border-slate-100 shrink-0">
+    <div className="w-full bg-white p-3 sm:px-4 sm:py-3 rounded-lg border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col gap-2 relative">
+      <div className="flex items-center gap-2.5 sm:gap-4">
+        {/* File Icon */}
+        <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center bg-slate-50 rounded-md border border-slate-100 shrink-0">
           <FileIcon type={file.type} />
         </div>
 
         {/* File Name */}
         <div className="flex-1 min-w-0">
-          <span className="text-sm font-medium text-slate-800 truncate block" title={file.name}>
+          <span className="text-xs sm:text-sm font-medium text-slate-800 truncate block" title={file.name}>
             {file.name}
           </span>
         </div>
 
         {/* File Size */}
-        <div className="w-28 shrink-0 text-xs text-slate-500 font-mono">
+        <div className="shrink-0 text-[11px] sm:text-xs text-slate-500 font-mono sm:w-24 md:w-28">
           {formatFileSize(file.size)}
         </div>
 
         {/* Status Badge & Actions */}
-        <div className="w-44 shrink-0 flex items-center justify-end gap-2">
+        <div className="shrink-0 flex items-center justify-end gap-1 sm:gap-2 sm:w-36 md:w-44">
           <FileStatusBadge
             status={file.status}
             progress={file.progress}
@@ -85,10 +85,10 @@ export const FileItem: React.FC<FileItemProps> = ({
             <button
               type="button"
               onClick={() => onCancel(file.id)}
-              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
+              className="p-1 sm:p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0"
               title="Cancel upload"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           )}
 
@@ -96,10 +96,10 @@ export const FileItem: React.FC<FileItemProps> = ({
             <button
               type="button"
               onClick={() => onRetry(file.id)}
-              className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer shrink-0"
+              className="p-1 sm:p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer shrink-0"
               title="Retry upload"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           )}
 
@@ -108,14 +108,14 @@ export const FileItem: React.FC<FileItemProps> = ({
             <button
               type="button"
               onClick={() => setIsMenuOpen((prev) => !prev)}
-              className={`p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 ${
+              className={`p-1 sm:p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 ${
                 isMenuOpen
                   ? 'bg-slate-100 text-slate-700'
                   : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
               }`}
               aria-label="Actions"
             >
-              <MoreVertical className="w-4 h-4" />
+              <MoreVertical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
 
             {isMenuOpen && (
