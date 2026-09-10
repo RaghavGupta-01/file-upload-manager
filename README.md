@@ -6,6 +6,10 @@ It provides a multi-file upload management system featuring drag-and-drop ingest
 
 ---
 
+> **Live Demo** : https://file-upload-manager-ecru.vercel.app/
+
+---
+
 ## Features
 
 - **Multi-File Selection & Drag-and-Drop**: Native HTML5 Drag & Drop with active viewport overlay styling, file picker integration, and keyboard accessibility.
