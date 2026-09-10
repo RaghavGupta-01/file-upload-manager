@@ -1,7 +1,6 @@
-import React from 'react'
 import { UploadCloud } from 'lucide-react'
 
-export const EmptyState: React.FC = () => {
+export const EmptyState = () => {
   return (
     <div className="flex-1 flex items-center justify-center p-8">
       <div className="flex flex-col items-center justify-center text-center max-w-md p-8">
@@ -12,7 +11,8 @@ export const EmptyState: React.FC = () => {
           No files uploaded
         </h3>
         <p className="text-sm text-slate-500 leading-relaxed">
-          Click the <span className="font-semibold text-blue-600">Upload File</span> button above to start adding files.
+          Drag & drop files anywhere on the screen, or click the{' '}
+          <span className="font-semibold text-blue-600">Upload File</span> button above to start adding files.
         </p>
       </div>
     </div>

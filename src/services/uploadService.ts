@@ -5,6 +5,7 @@ export interface UploadProgressCallback {
 }
 
 export interface UploadOptions {
+  startChunk?: number
   onProgress?: UploadProgressCallback
   onSuccess?: () => void
   onError?: (error: Error) => void
@@ -39,7 +40,7 @@ class UploadService {
   }
 
   public async upload(fileItem: FileItem, options: UploadOptions = {}): Promise<void> {
-    const { onProgress, onSuccess, onError } = options
+    const { onProgress, onSuccess, onError, startChunk } = options
 
     if (this.activeUploads.has(fileItem.id)) {
       this.cancel(fileItem.id)
@@ -50,10 +51,14 @@ class UploadService {
 
     const totalBytes = fileItem.size || 1024 * 1024
     const totalChunks = Math.max(1, Math.ceil(totalBytes / CHUNK_SIZE))
-    let uploadedBytes = 0
+    const startChunkIndex = Math.min(
+      totalChunks - 1,
+      startChunk ?? (fileItem.uploadedBytes ? Math.floor(fileItem.uploadedBytes / CHUNK_SIZE) : 0)
+    )
+    let uploadedBytes = startChunkIndex * CHUNK_SIZE
 
     try {
-      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+      for (let chunkIndex = startChunkIndex; chunkIndex < totalChunks; chunkIndex++) {
         if (abortController.signal.aborted) {
           throw new Error('Upload canceled')
         }
